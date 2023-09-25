@@ -1,0 +1,70 @@
+*,
+*:before,
+*:after,
+html,
+body {
+  box-sizing: border-box;
+}
+
+:root {
+  --hue: 200;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --bg: hsl(var(--hue), 10%, 80%);
+  --fg: hsl(var(--hue), 100%, 30%);
+}
+
+body {
+  background-color: indigo;
+  color: var(--fg);
+  font-family: var(--font);
+  margin: 0;
+  overflow: hidden;
+}
+/* 
+https://stackoverflow.com/a/57828359
+*/
+
+/* .perspective-container {
+  overflow: hidden; /* so we dont get any undesired scrolling in the browser window 
+} */
+
+.curtain {
+  height: 70vh;
+  background-color: indigo;
+  z-index: 1;
+  border-bottom:solid rgb(51, 187, 250) 1px;
+}
+
+
+.verticals {
+  background-size: 20px 20px;
+  background-image: linear-gradient(
+    to right,
+    rgb(51, 187, 250) 1px,
+    transparent 1px
+  );
+  width: 100%;
+  height: 50vh;
+  bottom: 0;
+  position: absolute;
+  z-index: -1;
+
+  transform: perspective(400px) rotateX(75deg) scale(2);
+}
+
+.horizontals {
+  background-size: 20px 20px;
+  background-image: linear-gradient(
+    to bottom,
+    rgb(51, 187, 250) 1px,
+    transparent 1px
+  );
+  width: 100%;
+  height: 500vh;
+  bottom: 100px;
+  position: absolute;
+  z-index: -1;
+
+  /*transform: perspective(400px) rotateX(65deg) scale(2);*/
+}

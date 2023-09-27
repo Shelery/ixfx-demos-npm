@@ -1,11 +1,11 @@
-import { Points } from '../../ixfx/geometry.js';
-import { Forces } from '../../ixfx/modulation.js';
-import { continuously } from '../../ixfx/flow.js';
-import { pointTracker } from '../../ixfx/data.js';
-import * as Util from './util.js';
+import { Points } from "../../ixfx/geometry.js";
+import { Forces } from "../../ixfx/modulation.js";
+import { continuously } from "../../ixfx/flow.js";
+import { pointTracker } from "../../ixfx/data.js";
+import * as Util from "./util.js";
 
 const settings = Object.freeze({
-  thingEl: document.querySelector(`#thing`)
+  thingEl: document.querySelector(`#thing`),
 });
 
 let state = Object.freeze({
@@ -18,25 +18,27 @@ let state = Object.freeze({
   // Record size of window
   window: {
     width: window.innerWidth,
-    height: window.innerHeight
-  }
+    height: window.innerHeight,
+  },
 });
 
 // Update state of world
 const update = () => {
   // Apply velocity to calculate a new position
   let changedThing = Forces.apply(state);
+  const friction = Forces.velocityForce(0.1, `dampen`);
+  changedThing = Forces.apply(changedThing, friction);
 
   // Wrap point to be between 0,0 and 1,1
   // This means if the new position is outside the bounds of the screen
   // it will carry over to other side
-  const posAfterWrap = Points.wrap(changedThing.position ?? { x: 0.5, y: 0.5 } );
-    
+  const posAfterWrap = Points.wrap(changedThing.position ?? { x: 0.5, y: 0.5 });
+
   // Set to state
   state = {
     ...state,
     position: posAfterWrap,
-    velocity: changedThing.velocity ?? Points.Empty
+    velocity: changedThing.velocity ?? Points.Empty,
   };
 };
 
@@ -54,6 +56,7 @@ const use = () => {
 };
 
 function setup() {
+  console.log(`hello`);
   continuously(() => {
     update();
     use();
@@ -61,10 +64,12 @@ function setup() {
 
   // Update our tracking of window size if there's a resize
   window.addEventListener(`resize`, () => {
-    saveState({ window: {
-      width: window.innerWidth,
-      height: window.innerHeight
-    } });
+    saveState({
+      window: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      },
+    });
   });
 
   // On pointerup, assign a new velocity based on accumulated movement
@@ -80,11 +85,16 @@ function setup() {
       const avg = Points.divide(Points.normalise(nfo.fromInitial.average), 200);
 
       // For debug purposes, show velocity x,y on screen
-      const labelElement = /** @type HTMLElement */(document.querySelector(`#velocity`));
-      if (labelElement) labelElement.innerHTML = `accel x: ${avg.x}<br />accel y: ${avg.y}`;
+      const labelElement = /** @type HTMLElement */ (
+        document.querySelector(`#velocity`)
+      );
+      if (labelElement)
+        labelElement.innerHTML = `accel x: ${avg.x}<br />accel y: ${avg.y}`;
 
-      const { position, velocity } = Forces.apply(state,
-        Forces.accelerationForce(avg, `dampen`));
+      const { position, velocity } = Forces.apply(
+        state,
+        Forces.accelerationForce(avg, `dampen`)
+      );
       saveState({ velocity, position });
     }
 
@@ -101,16 +111,16 @@ function setup() {
     // Track the movement
     pointerMovement.seen({ x: event.movementX, y: event.movementY });
   });
-};
+}
 setup();
 
 /**
  * Save state
- * @param {Partial<state>} s 
+ * @param {Partial<state>} s
  */
-function saveState (s) {
+function saveState(s) {
   state = Object.freeze({
     ...state,
-    ...s
+    ...s,
   });
 }
